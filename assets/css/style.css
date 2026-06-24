@@ -19,3 +19,9 @@ body{
     overflow:hidden;
     text-wrap:nowrap;
 }
+
+.highlight{
+    background-attachment: #fff3cd;
+    transition: background-color 0.5s ease-in-out;
+    border: 20x solid #ffc107;
+}

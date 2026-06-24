@@ -1,110 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ajax HTTP Posts</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajax Post</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    
+    <style>
+        .highlight {
+            background-color: #fff3cd !important;
+            border: 2px solid #ffc107 !important;
+            transition: all 0.5s ease;
+        }
+        .truncate-text {
+            display: -webkit-box;
+            /* -webkit-line-clamp: 2;  */
+            -webkit-box-orient: vertical;  
+            overflow: hidden;
+        }
+        #spinner {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
 
-    <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
-        integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N"
-        crossorigin="anonymous"
-    />
 
-    <link rel="stylesheet" href="./assets/css/style.css" />
+        .card-header h3 { 
+            display: block;
+            width: 100%;
+            text-overflow: ellipsis;
+            overflow:hidden;
+            white-space:nowrap;
+        }
+    </style>
 </head>
-<body>
-    <div class="container-fluid my-5">
-        <div class="row mb-4">
-            <div class="col-md-6 offset-md-3">
-                <div class="card">
+<body class="bg-light">
+
+    <div class="container mt-5">
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-6">
+                <div class="card shadow-sm">
                     <div class="card-body">
                         <form id="postForm">
-
                             <div class="form-group">
-                                <label for="title" class="font-weight-bold">Title*</label>
-                                <input type="text" class="form-control" id="title"/>
+                                <label for="title">Title*</label>
+                                <input type="text" id="title" class="form-control" required>
                             </div>
-
                             <div class="form-group">
-                                <label for="body" class="font-weight-bold">Body*</label>
-                                <textarea rows="4" class="form-control" id="body"></textarea>
+                                <label for="body">Body*</label>
+                                <textarea id="body" rows="3" class="form-control" required></textarea>
                             </div>
-
                             <div class="form-group">
-                                <label for="userId" class="font-weight-bold">User Id*</label>
-                                <select rows="4" class="form-control" id="userId">
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
-                                    <option value="6">6</option>
-                                    <option value="7">7</option>
-                                    <option value="8">8</option>
-                                    <option value="9">9</option>
-                                    <option value="10">10</option>
+                                <label for="userId">UserId*</label>
+                                <select  id="userId" class="form-control" required>
+                                        <option value="" disabled selected>Select User Id</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                        <option value="10">10</option>
+
                                 </select>
                             </div>
-
-                            <button
-                                type="submit"
-                                class="btn btn-primary btn-block"
-                                id="addPostBtn"
-                            >
-                                Add Post
-                            </button>
-
-                            <button
-                                type="button"
-                                class="btn btn-warning btn-block d-none"
-                                id="updatePostBtn"
-                            >
-                                Update Post
-                            </button>
-
+                            <button type="submit" id="addPostBtn" class="btn btn-primary btn-block">Add Post</button>
+                            <button type="button" id="updatePostBtn" class="btn btn-warning btn-block d-none">Update Post</button>
                         </form>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <div  class="row" id="postContainer">
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Title</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                            Possimus hic ex facilis necessitatibus! Quis similique illo
-                            voluptatem ea quo veritatis magni dignissimos nihil corporis
-                            deserunt.
-                        </p>
-                    </div>
-                    <div class="card-footer d-flex justify-content-between">
-                        <button class="btn btn-sm btn-outline-primary">Edit</button>
-                        <button class="btn btn-sm btn-outline-danger">Remove</button>
                     </div>
                 </div>
             </div>
         </div>
+
+        <div id="postContainer" class="row"></div>
     </div>
 
-    <div class="spinner d-none" id="spinner">
+    <div id="spinner">
         <div class="spinner-border text-primary" role="status">
             <span class="sr-only">Loading...</span>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <script src="./assets/js/app.js"></script>
-
 </body>
 </html>
